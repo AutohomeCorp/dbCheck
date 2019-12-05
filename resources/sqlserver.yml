@@ -1,0 +1,72 @@
+databaseType: sqlserver
+jdbcDriver: com.microsoft.sqlserver.jdbc.SQLServerDriver
+jdbcUrl: jdbc:sqlserver://%s;DatabaseName=%s
+selectIndexSql: |
+    SELECT
+        '%s' AS dbName,
+        o.name AS tableName,
+        a.name indexName,
+        d.COLUMN_NAME AS columnName,
+        case when a.is_unique = 1 OR a.is_primary_key = 1 then 0 else 1 end as nonUnique,
+        d.ORDINAL_POSITION AS seqInIndex,
+        '' AS nullAble,
+        '' AS indexType
+    FROM
+        sys.indexes a ( NOLOCK )
+        INNER JOIN sys.index_columns b (NOLOCK) ON a.object_id = b.object_id and a.index_id = b.index_id
+        INNER JOIN sysindexkeys c (NOLOCK) ON a.object_id = c.id and b.index_id = c.indid and b.column_id = c.colid
+        JOIN sysobjects o ON o.id= c.id  
+        INNER JOIN INFORMATION_SCHEMA.COLUMNS d (NOLOCK) ON a.object_id = object_id(d.TABLE_NAME) and c.keyno = d.ORDINAL_POSITION
+    WHERE
+        o.xtype= 'U'
+        ORDER BY
+        o.name,
+        d.COLUMN_NAME,
+        d.ORDINAL_POSITION;
+selectColumnSql: |
+    SELECT
+        '%s' AS dbName,
+        ts.name AS tableName,
+        c.name AS columnName,
+        t.name AS dataType,
+        c.length AS maxLength,
+        c.isnullable AS isNullable,
+        (
+        SELECT VALUE FROM   sys.extended_properties ep(NOLOCK) WHERE  ep.major_id = c.id AND ep.minor_id=c.colid
+        ) AS [description],
+        [IsPk]=CASE WHEN EXISTS (SELECT 1 FROM sysobjects WHERE xtype='PK' and parent_obj=c.id and name IN (
+        SELECT name FROM sysindexes WHERE indid in(SELECT indid FROM sysindexkeys WHERE id = c.id AND colid=c.colid))) THEN 1 ELSE 0 END,
+        c.cdefault AS columnDefault,
+        '' AS extra
+    FROM
+        syscolumns c(NOLOCK)
+        INNER JOIN sys.tables ts(NOLOCK) ON ts.[object_id] = c.id
+        INNER JOIN sys.types t(NOLOCK) ON t.system_type_id=c.xtype
+        INNER JOIN systypes st(NOLOCK) ON st.name=t.name AND st.name<>'sysname'
+        INNER JOIN sysusers su(NOLOCK) ON st.uid=su.uid AND su.name='sys'
+    WHERE
+        1=1
+    ORDER BY
+        c.id ASC;
+existsColumn:
+    - columnName: created_stime
+      dataType: datatime
+      isIndex: 0
+    - columnName: modified_stime
+      dataType: datatime
+      isIndex: 0
+    - columnName: is_del
+      dataType: datatime
+      isIndex: 0
+ingoreColumn:
+    - gmt_create
+    - gmt_modify
+ingoreIndex:
+    - gmt_create
+    - gmt_modify
+complexSqlJoinQuantity: 5
+primaryKeyStartWith: PK_
+normalIndexNameStartWith: ix_
+uniqueIndexNameStartWith: uniq_
+requiredWhere:
+    - is_del,isdel

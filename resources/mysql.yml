@@ -1,0 +1,61 @@
+databaseType: mysql
+jdbcDriver: com.mysql.jdbc.Driver
+jdbcUrl: jdbc:mysql://%s/%s?useSSL=false&verifyServerCertificate=false
+selectIndexSql: |
+  SELECT
+      s.TABLE_SCHEMA AS dbName,
+      s.TABLE_NAME AS tableName,
+      s.NON_UNIQUE AS nonUnique,
+      s.INDEX_NAME AS indexName,
+      s.SEQ_IN_INDEX AS seqInIndex,
+      s.COLUMN_NAME AS columnName,
+      s.NULLABLE AS nullAble,
+      s.INDEX_TYPE AS indexType
+  FROM
+      information_schema.STATISTICS s
+  WHERE
+      s.TABLE_SCHEMA = '%s';
+selectColumnSql: |
+  SELECT
+    c.TABLE_SCHEMA AS dbName,
+    c.TABLE_NAME AS tableName,
+    c.COLUMN_NAME AS columnName,
+    c.DATA_TYPE AS dataType,
+    IFNULL ( c.CHARACTER_MAXIMUM_LENGTH, 0 ) AS maxLength,
+    c.IS_NULLABLE AS isNullable,
+    c.COLUMN_COMMENT AS description,
+    ( CASE c.COLUMN_KEY WHEN 'PRI' THEN 'YES' ELSE 'NO' END ) AS isPk,
+    ( CASE WHEN c.EXTRA= 'auto_increment' THEN 'auto_increment' WHEN c.IS_NULLABLE= 'YES' THEN 'NULL' ELSE c.COLUMN_DEFAULT END ) AS columnDefault,
+    c.EXTRA AS extra
+  FROM
+    information_schema.COLUMNS AS c
+  WHERE
+    c.TABLE_SCHEMA = '%s'
+  ORDER BY
+    c.TABLE_NAME ASC,
+    c.ORDINAL_POSITION ASC;
+existsColumn:
+  - columnName: id
+    dataType:
+    isIndex: 0
+  - columnName: created_stime
+    dataType: datatime
+    isIndex: 0
+  - columnName: modified_stime
+    dataType: datatime
+    isIndex: 0
+  - columnName: is_del
+    dataType:
+    isIndex: 0
+ingoreColumn:
+  - gmt_create
+  - gmt_modify
+ingoreIndex:
+  - gmt_create
+  - gmt_modify
+complexSqlJoinQuantity: 3
+primaryKeyStartWith: PRIMARY
+normalIndexNameStartWith: idx_
+uniqueIndexNameStartWith: uniq_
+requiredWhere:
+  - is_del,isdel

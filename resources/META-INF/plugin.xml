@@ -1,0 +1,46 @@
+<idea-plugin>
+    <id>com.autohome.lemon.dbcheck</id>
+    <name>Autohome DB Check</name>
+    <version>1.0.66</version>
+    <vendor email="hantianwei@autohome.com.cn" url="http://www.autohome.com.cn">Autohome Inc</vendor>
+
+    <!--  <description></description>-->
+
+    <!--  <change-notes></change-notes>-->
+
+    <!-- please see http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/build_number_ranges.html for description -->
+    <idea-version since-build="173.0"/>
+
+    <!-- please see http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/plugin_compatibility.html
+         on how to target different products -->
+    <!--   uncomment to enable plugin in all products-->
+    <!--  <depends>com.intellij.modules.lang</depends>-->
+
+    <extensions defaultExtensionNs="com.intellij">
+        <!-- Add your extensions here -->
+        <applicationConfigurable instance="com.autohome.lemon.dbcheck.config.AutoCheckSetting"/>
+        <applicationService serviceInterface="com.autohome.lemon.dbcheck.config.PersistentState"
+                            serviceImplementation="com.autohome.lemon.dbcheck.config.PersistentState"/>
+        <toolWindow canCloseContents="true" anchor="bottom" id="AutoDBCheck"
+                    factoryClass="com.autohome.lemon.dbcheck.ui.AutoDBCheckToolWindowFactory" secondary="true"/>
+    </extensions>
+
+    <actions>
+        <group id="AutoDBCheck.Group" text="AutoDBCheck" description="Check database" popup="true">
+            <add-to-group group-id="ToolsMenu" anchor="last"/>
+        </group>
+<!--        <action id="Check.Update.File" class="com.autohome.lemon.dbcheck.action.AutoCheckUpdate"-->
+<!--                text="Check Update File" description="Check update file">-->
+<!--            <add-to-group group-id="AutoDBCheck.Group" anchor="last"/>-->
+<!--        </action>-->
+        <action id="Check.All.File" class="com.autohome.lemon.dbcheck.action.AutoCheckAll" text="数据库规约扫描"
+                description="Check all file">
+            <add-to-group group-id="AutoDBCheck.Group" anchor="first"/>
+            <add-to-group group-id="ProjectViewPopupMenu"
+                          relative-to-action="GenerateJavadoc" anchor="before"/>
+        </action>
+
+
+    </actions>
+
+</idea-plugin>
