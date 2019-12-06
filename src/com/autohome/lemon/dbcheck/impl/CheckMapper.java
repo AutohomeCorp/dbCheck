@@ -329,8 +329,8 @@ public class CheckMapper {
         }
         return Arrays.stream(((XmlFileImpl) psiFile).getRootTag().getSubTags())
                 .filter(t -> t.getName().equals(AutoConstant.XML_TAG_SQL)
-                        && t.getAttribute(AutoConstant.XML_TAG_REF_ID) != null
-                        && t.getAttribute(AutoConstant.XML_TAG_REF_ID).getValue().equals(xmlTag.getAttribute(AutoConstant.XML_TAG_REF_ID).getValue()))
+                        && t.getAttribute(AutoConstant.XML_TAG_ID) != null
+                        && t.getAttribute(AutoConstant.XML_TAG_ID).getValue().equals(xmlTag.getAttribute(AutoConstant.XML_TAG_REF_ID).getValue()))
                 .findFirst()
                 .orElse(null) != null;
     }
