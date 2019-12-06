@@ -24,10 +24,10 @@
 > - 3) 配置数据库和项目信息：[配置说明](https://github.com/AutohomeCorp/dbCheck/wiki/配置说明)
 > - 4) 自定义规则（自1.0.61版本支持）：[自定义规则说明](https://github.com/AutohomeCorp/dbCheck/wiki/自定义规则说明)
 
->   ![setting](/doc/image/settings.png)
+>   ![setting](https://files3.autoimg.cn/youche-h5/dbcheck/settings.png)
        
 >   > 3.3、结果
-       ![result](/doc/image/result.png)
+       ![result](https://files3.autoimg.cn/youche-h5/dbcheck/result.png)
 
 #### 六、规划
 > - 1) 逐步支持DBA和能够检测的DB规范，实现工具化检查
