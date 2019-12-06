@@ -1,23 +1,27 @@
 <idea-plugin>
     <id>com.autohome.lemon.dbcheck</id>
     <name>Autohome DB Check</name>
-    <version>1.0.66</version>
+    <version>1.0.67</version>
     <vendor email="hantianwei@autohome.com.cn" url="http://www.autohome.com.cn">Autohome Inc</vendor>
 
       <description>
           <![CDATA[
-          Mybatis 项目数据库规约检查工具 <br/>
-          可以自定义规约<br/>
-          支持Mysql 和 Sql Server
+          Autohome Database Guidelines plugin support. <br/>
+          Support for custom Guidelines<br/>
+          Support for Mysql and Sql Server
       ]]>
       </description>
 
       <change-notes>
           <![CDATA[
+      <h4>1.0.67</h4>
+      <ul>
+          <li>Fixed Include bug under same Mapper file</li>
+      </ul>
       <h4>1.0.66</h4>
       <ul>
-          <li>支持同一Mapper文件下Include</li>
-          <li>支持多个IF下的order by</li>
+          <li>Support Include tags under the same Mapper file</li>
+          <li>Support for order by under multiple ifs</li>
       </ul>
       ]]>
       </change-notes>
