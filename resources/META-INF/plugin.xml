@@ -1,19 +1,23 @@
 <idea-plugin>
     <id>com.autohome.lemon.dbcheck</id>
     <name>Autohome DB Check</name>
-    <version>1.0.67</version>
+    <version>1.0.68</version>
     <vendor email="hantianwei@autohome.com.cn" url="http://www.autohome.com.cn">Autohome Inc</vendor>
 
-      <description>
-          <![CDATA[
+    <description>
+        <![CDATA[
           Autohome Database Guidelines plugin support. <br/>
           Support for custom Guidelines<br/>
           Support for Mysql and Sql Server
       ]]>
-      </description>
+    </description>
 
-      <change-notes>
-          <![CDATA[
+    <change-notes>
+        <![CDATA[
+      <h4>1.0.68</h4>
+      <ul>
+          <li>Fixed Include bug under same Mapper file</li>
+      </ul>
       <h4>1.0.67</h4>
       <ul>
           <li>Fixed Include bug under same Mapper file</li>
@@ -24,10 +28,10 @@
           <li>Support for order by under multiple ifs</li>
       </ul>
       ]]>
-      </change-notes>
+    </change-notes>
 
     <!-- please see http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/build_number_ranges.html for description -->
-    <idea-version since-build="173.0"/>
+    <idea-version since-build="182.0"/>
 
     <!-- please see http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/plugin_compatibility.html
          on how to target different products -->
@@ -47,10 +51,10 @@
         <group id="AutoDBCheck.Group" text="AutoDBCheck" description="Check database" popup="true">
             <add-to-group group-id="ToolsMenu" anchor="last"/>
         </group>
-<!--        <action id="Check.Update.File" class="com.autohome.lemon.dbcheck.action.AutoCheckUpdate"-->
-<!--                text="Check Update File" description="Check update file">-->
-<!--            <add-to-group group-id="AutoDBCheck.Group" anchor="last"/>-->
-<!--        </action>-->
+        <!--        <action id="Check.Update.File" class="com.autohome.lemon.dbcheck.action.AutoCheckUpdate"-->
+        <!--                text="Check Update File" description="Check update file">-->
+        <!--            <add-to-group group-id="AutoDBCheck.Group" anchor="last"/>-->
+        <!--        </action>-->
         <action id="Check.All.File" class="com.autohome.lemon.dbcheck.action.AutoCheckAll" text="数据库规约扫描"
                 description="Check all file">
             <add-to-group group-id="AutoDBCheck.Group" anchor="first"/>
@@ -60,5 +64,5 @@
 
 
     </actions>
-
+    <depends>com.intellij.modules.java</depends>
 </idea-plugin>

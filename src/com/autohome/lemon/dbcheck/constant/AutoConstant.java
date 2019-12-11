@@ -72,4 +72,6 @@ public class AutoConstant {
     public static final String DATABASE_CONF_PATH = "%s.yml";
 
     public static final String SPLIT_DOT = ",";
+
+    public static final String SPACE = " ";
 }

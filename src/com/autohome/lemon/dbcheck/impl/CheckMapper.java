@@ -309,7 +309,7 @@ public class CheckMapper {
         }
         for (XmlTag xmlTagSub : xmlTag.getSubTags()) {
             if (xmlTagSub.getName().equals(AutoConstant.XML_SQL_TAG_INCLUDE) && !isPsiFileRootTag(psiFile, xmlTagSub)) {
-                text = text.replace(xmlTagSub.getText(), AutoConstant.SQL_ALL_COLUMN_STAR);
+                text = text.replace(xmlTagSub.getText(), AutoConstant.SPACE);
             }
             return clearInclude(psiFile, xmlTagSub, text);
         }
@@ -575,6 +575,68 @@ public class CheckMapper {
                 && StringUtils.isNotEmpty(RegexUtil.clearSqlKeyword(column.getTable()))
                 && StringUtils.isNotEmpty(RegexUtil.clearSqlKeyword(column.getName()))
                 && !AutoConstant.UNKNOWN.equals(column.getTable());
+    }
+
+    public static void main(String[] args) {
+        String sql = "SELECT\n" +
+                "\tac.cityid AS cityid,\n" +
+                "\tac.cityname AS cityname,\n" +
+                "\tt2.endedactivitycount AS endedactivitycount,\n" +
+                "\tt1.totalordercount AS totalordercount,\n" +
+                "\tt1.arrivecount AS arrivecount,\n" +
+                "\tt1.dealcount AS dealcount,\n" +
+                "\tt1.effectiveuser AS effectiveusercount,\n" +
+                "\tt1.invitatedcount AS invitatedcount \n" +
+                "FROM\n" +
+                "\treproduction.dbo.areacity ac WITH ( nolock )\n" +
+                "\tLEFT JOIN (\n" +
+                "\tSELECT\n" +
+                "\t\ta.city ,\n" +
+                "\t\tSUM ( a.leadscount ) AS totalordercount,\n" +
+                "\t\tSUM ( a.arrivedcount ) AS arrivecount,\n" +
+                "\t\tSUM ( a.dealedcount ) AS dealcount,\n" +
+                "\t\tSUM ( CASE WHEN a.activitytype = 1 THEN aoc.effectiveordercount WHEN a.activitytype = 3 THEN a.leadscount END ) AS effectiveuser,\n" +
+                "\t\tSUM ( a.invitatedcount ) AS invitatedcount \n" +
+                "\tFROM\n" +
+                "\t\tdbo.activity a WITH ( nolock )\n" +
+                "\t\tLEFT JOIN dbo.activityordercount aoc WITH ( nolock ) ON a.id = aoc.activityid \n" +
+                "\tWHERE\n" +
+                "\t\tCONVERT ( CHAR ( 7 ), ?, 120 ) = CONVERT ( CHAR ( 7 ), a.activitydate, 120 ) and a.activitydate >= ? \n" +
+                "\t\tAND a.activitydate <= ? \n" +
+                "\t\tAND a.isdel = 0 \n" +
+                "\t\tAND a.activitytype IN ( 1, 3 ) \n" +
+                "\t\tAND a.status = 7 \n" +
+                "\tGROUP BY\n" +
+                "\t\ta.city \n" +
+                "\t) t1 ON t1.city = ac.cityid\n" +
+                "\tLEFT JOIN (\n" +
+                "\tSELECT\n" +
+                "\t\ta.city ,\n" +
+                "\t\tCOUNT ( 1 ) AS endedactivitycount \n" +
+                "\tFROM\n" +
+                "\t\tdbo.activity a WITH ( nolock ) \n" +
+                "\tWHERE\n" +
+                "\t\tCONVERT ( CHAR ( 7 ), ?, 120 ) = CONVERT ( CHAR ( 7 ), a.activitydate, 120 ) and a.activitydate >= ? \n" +
+                "\t\tAND a.activitydate <= ? \n" +
+                "\t\tAND a.status = 7 \n" +
+                "\t\tAND a.isdel = 0 \n" +
+                "\t\tAND a.activitytype IN ( 1, 3 ) \n" +
+                "\tGROUP BY\n" +
+                "\t\ta.city \n" +
+                "\t) t2 ON ac.cityid = t2.city \n" +
+                "WHERE\n" +
+                "\t1 = 1 \n" +
+                "\tAND ac.cityid IN ( ? )";
+        String dbType = "sqlserver";
+        List<SQLStatement> sqlStatementList = SQLUtils.parseStatements(sql, dbType);
+        for (SQLStatement sqlStatement : sqlStatementList) {
+            SchemaStatVisitor schemaStatVisitor = new MySqlSchemaStatVisitor();
+            if (DbTypeEnum.SQL_SERVER.getValue().equals(dbType)) {
+                schemaStatVisitor = new SQLServerSchemaStatVisitor();
+            }
+            sqlStatement.accept(schemaStatVisitor);
+            System.out.println();
+        }
     }
 
 }
